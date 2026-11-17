@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Client{% endblock %}
+
+{% block body %}
+    <h1>Client</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ client.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ client.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ client.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ client.email }}</td>
+            </tr>
+            <tr>
+                <th>Telephone</th>
+                <td>{{ client.telephone }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <a href="{{ path('app_client_index') }}">back to list</a>
+
+    <h2>Commandes de ce client</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Numéro</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for commande in client.commandes %}
+            <tr>
+                <td>{{ commande.numero }}</td>
+                <td>{{ commande.date ? commande.date|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ commande.statut }}</td>
+                <td>{{ commande.total|number_format(2, ',', ' ') }} €</td>
+                <td><a href="{{ path('app_commande_show', {'id': commande.id}) }}">Détails</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune commande pour ce client</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_commande_new', {'client': client.id}) }}">Nouvelle commande pour ce client</a>
+
+    
+
+    
+{% endblock %}

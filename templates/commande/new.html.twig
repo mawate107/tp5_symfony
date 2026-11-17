@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle commande{% endblock %}
+
+{% block body %}
+    <h1>Nouvelle commande</h1>
+
+    <p>La date et l'heure sont enregistrées automatiquement ; le montant est calculé à partir des prix des produits.</p>
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.numero) }}
+        {{ form_row(form.statut) }}
+        {{ form_row(form.client) }}
+
+        <h2>Produits commandés</h2>
+        {{ form_errors(form.ligneCommandes) }}
+        <div id="lignes"
+             data-prototype="{{ form_widget(form.ligneCommandes.vars.prototype)|e('html_attr') }}"
+             data-index="{{ form.ligneCommandes|length }}">
+            {% for ligne in form.ligneCommandes %}
+                <div class="ligne">
+                    {{ form_widget(ligne) }}
+                    {{ form_errors(ligne) }}
+                    <button type="button" class="retirer">Retirer</button>
+                </div>
+            {% endfor %}
+        </div>
+        <button type="button" id="ajouter-ligne">+ Ajouter un produit</button>
+        {% do form.ligneCommandes.setRendered %}
+
+        <p><button type="submit">Enregistrer la commande</button></p>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_commande_index') }}">Retour à la liste</a>
+
+    <script>
+        (function () {
+            const conteneur = document.getElementById('lignes');
+
+            function brancherRetrait(ligne) {
+                ligne.querySelector('.retirer').addEventListener('click', () => ligne.remove());
+            }
+
+            function ajouterLigne() {
+                const index = parseInt(conteneur.dataset.index, 10);
+                const ligne = document.createElement('div');
+                ligne.className = 'ligne';
+                ligne.innerHTML = conteneur.dataset.prototype.replace(/__name__/g, index)
+                    + ' <button type="button" class="retirer">Retirer</button>';
+                conteneur.dataset.index = index + 1;
+                conteneur.appendChild(ligne);
+                brancherRetrait(ligne);
+            }
+
+            conteneur.querySelectorAll('.ligne').forEach(brancherRetrait);
+            document.getElementById('ajouter-ligne').addEventListener('click', ajouterLigne);
+
+            // Au moins une ligne affichée au premier chargement
+            if (conteneur.querySelectorAll('.ligne').length === 0) {
+                ajouterLigne();
+            }
+        })();
+    </script>
+{% endblock %}

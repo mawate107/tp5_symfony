@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des commandes{% endblock %}
+
+{% block body %}
+    <h1>Liste des commandes</h1>
+
+    {% for message in app.flashes('success') %}
+        <p style="color:green">{{ message }}</p>
+    {% endfor %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Numéro</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Client</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for commande in commandes %}
+            <tr>
+                <td>{{ commande.numero }}</td>
+                <td>{{ commande.date ? commande.date|date('d/m/Y H:i') : '' }}</td>
+                <td>{{ commande.statut }}</td>
+                <td>
+                    {% if commande.client %}
+                        <a href="{{ path('app_client_show', {'id': commande.client.id}) }}">{{ commande.client.prenom }} {{ commande.client.nom }}</a>
+                    {% endif %}
+                </td>
+                <td>{{ commande.total|number_format(2, ',', ' ') }} €</td>
+                <td><a href="{{ path('app_commande_show', {'id': commande.id}) }}">Détails</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">Aucune commande enregistrée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_commande_new') }}">Nouvelle commande</a>
+{% endblock %}
